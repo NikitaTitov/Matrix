@@ -17,7 +17,7 @@ public class Matrix implements Cloneable {
 
     @Override
     protected Matrix clone() throws CloneNotSupportedException {
-        return (Matrix)super.clone();
+        return (Matrix) super.clone();
     }
 
     @Override
@@ -35,6 +35,7 @@ public class Matrix implements Cloneable {
     public int hashCode() {
         return Arrays.deepHashCode(martix);
     }
+
     private void same(Matrix right) {
         if (this.getColumnCount() != right.getColumnCount()) {
             throw new IllegalArgumentException("1");
@@ -58,37 +59,16 @@ public class Matrix implements Cloneable {
         return martix[0].length;
     }
 
-
-    public Matrix multiply(Matrix other) {
-        this.same(other);
-        Matrix result = new Matrix(this.getRowCount(),other.getColumnCount());
-        for (int rowNumber = 0; rowNumber < this.getRowCount(); rowNumber++) {
-            for (int columnNumber = 0; columnNumber < other.getColumnCount(); columnNumber++) {
-                result.martix[rowNumber][columnNumber] = multiplyVector(getRow(this, rowNumber), getColumn(other, columnNumber));
+    public static Matrix multiply(Matrix left, Matrix right) {
+        Matrix result = new Matrix(left.getRowCount(), right.getColumnCount());
+        for (int i = 0; i < left.getRowCount(); i++) {
+            for (int j = 0; j < right.getColumnCount(); j++) {
+                for (int k = 0; k < left.getColumnCount(); k++) {
+                    result.martix[i][j] += left.martix[i][k] * right.martix[k][j];
+                }
             }
         }
         return result;
-    }
-    private static int[] getColumn(Matrix matrix, int columnNumber) {
-        int[] result = new int[matrix.getRowCount()];
-        for (int rowNumber = 0; rowNumber < matrix.getRowCount(); rowNumber++) {
-            result[rowNumber] = matrix.getElement(rowNumber,columnNumber);
-        }
-        return result;
-    }
-    private static int[] getRow(Matrix matrix, int rowNumber) {
-        int[] result = new int[matrix.getColumnCount()];
-        for (int columnNumber = 0; columnNumber < matrix.getColumnCount(); columnNumber++) {
-            result[columnNumber] = matrix.getElement(columnNumber,rowNumber);
-        }
-        return result;
-    }
-    private static int multiplyVector(int[] firstMatrix, int[] secondMatrix) {
-        int multiply = 0;
-        for (int i = 0; i < secondMatrix.length; i++) {
-            multiply += firstMatrix[i] * secondMatrix[i];
-        }
-        return multiply;
     }
 
     public Matrix addiction(Matrix other) {
@@ -144,7 +124,7 @@ public class Matrix implements Cloneable {
             } else {
                 sign = -1;
             }
-            result += sign * matrix.getElement(0,i) * (calcDeterminant(smaller));
+            result += sign * matrix.getElement(0, i) * (calcDeterminant(smaller));
         }
         return (result);
     }

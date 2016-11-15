@@ -15,7 +15,7 @@ public class MatrixTest {
                 {{1, 2}, {3, 4}});
         Matrix expect = Matrix.fill(new int[][]
                 {{7, 10}, {15, 22}});
-        assertTrue(left.multiply(right).equals(expect));
+        assertTrue(Matrix.multiply(left,right).equals(expect));
     }
 
     @Test
