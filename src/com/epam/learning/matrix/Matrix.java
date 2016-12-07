@@ -9,15 +9,17 @@ import java.util.Arrays;
 
 public class Matrix implements Cloneable {
 
-    int[][] martix;
+    int[][] array;
 
     public Matrix(int rowCount, int columnCount) {
-        martix = new int[rowCount][columnCount];
+        array = new int[rowCount][columnCount];
     }
 
     @Override
-    protected Matrix clone() throws CloneNotSupportedException {
-        return (Matrix) super.clone();
+    protected Matrix clone() {
+        Matrix ret = new Matrix(getRowCount(),getColumnCount());
+        ret.array = array.clone();
+        return ret;
     }
 
     @Override
@@ -27,36 +29,36 @@ public class Matrix implements Cloneable {
 
         Matrix matrix = (Matrix) o;
 
-        return Arrays.deepEquals(martix, matrix.martix);
+        return Arrays.deepEquals(array, matrix.array);
 
     }
 
     @Override
     public int hashCode() {
-        return Arrays.deepHashCode(martix);
+        return Arrays.deepHashCode(array);
     }
 
-    private void same(Matrix right) {
+    private void isMultiplyMatrix(Matrix right) {
         if (this.getColumnCount() != right.getColumnCount()) {
-            throw new IllegalArgumentException("1");
+            throw new IllegalArgumentException("The number of rows of the left matrix does not match the number of columns of the right matrix. Multiplication is impossible");
         }
 
     }
 
     private int getElement(int row, int column) {
-        return martix[row][column];
+        return array[row][column];
     }
 
     public void setElement(int row, int column, int element) {
-        martix[row][column] = element;
+        array[row][column] = element;
     }
 
     public int getRowCount() {
-        return martix.length;
+        return array.length;
     }
 
     public int getColumnCount() {
-        return martix[0].length;
+        return array[0].length;
     }
 
     public static Matrix multiply(Matrix left, Matrix right) {
@@ -64,43 +66,35 @@ public class Matrix implements Cloneable {
         for (int i = 0; i < left.getRowCount(); i++) {
             for (int j = 0; j < right.getColumnCount(); j++) {
                 for (int k = 0; k < left.getColumnCount(); k++) {
-                    result.martix[i][j] += left.martix[i][k] * right.martix[k][j];
+                    result.array[i][j] += left.array[i][k] * right.array[k][j];
                 }
             }
         }
         return result;
     }
 
-    public Matrix addiction(Matrix other) {
-        this.same(other);
+    public Matrix addition(Matrix other) {
+        this.isMultiplyMatrix(other);
         return calculate(other, new Addition());
     }
 
     public Matrix subtraction(Matrix other) {
-        this.same(other);
+        this.isMultiplyMatrix(other);
         return calculate(other, new Subtraction());
     }
 
     Matrix calculate(Matrix other, Operation operation) {
-        this.same(other);
+        this.isMultiplyMatrix(other);
         Matrix result = new Matrix(getRowCount(), getColumnCount());
         for (int row = 0; row < getRowCount(); row++) {
             for (int column = 0; column < getColumnCount(); column++) {
-                result.martix[row][column] = operation.calculate(this.martix[row][column], other.martix[row][column]);
+                result.array[row][column] = operation.calculate(this.array[row][column], other.array[row][column]);
             }
         }
         return result;
     }
 
-    public static Matrix fill(int[][] elements) {
-        Matrix result = new Matrix(elements.length, elements[0].length);
-        for (int row = 0; row < elements.length; row++) {
-            for (int column = 0; column < elements[0].length; column++) {
-                result.setElement(row, column, elements[row][column]);
-            }
-        }
-        return result;
-    }
+
 
     public static int calcDeterminant(Matrix matrix) {
         int result = 0;
